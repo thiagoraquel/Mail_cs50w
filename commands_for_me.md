@@ -12,4 +12,4 @@ python manage.py runserver
 
 python manage.py createsuperuser
 
-okss
+http://127.0.0.1:8000/
