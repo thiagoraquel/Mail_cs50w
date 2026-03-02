@@ -12,4 +12,4 @@ python manage.py runserver
 
 python manage.py createsuperuser
 
-oks
+okss
