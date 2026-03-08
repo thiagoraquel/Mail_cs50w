@@ -153,5 +153,55 @@ function view_email(id) {
         }
     });
 
-    
+    fetch(`/emails/${id}`)
+    .then(response => response.json())
+    .then(email => {
+        // 1. Exibir os detalhes do e-mail (From, To, Subject, etc.)
+        // Adicionei um div vazio para o botão
+        detailView.innerHTML = `
+            <div class="email-header">
+                <div><strong>From:</strong> ${email.sender}</div>
+                <div><strong>To:</strong> ${email.recipients}</div>
+                <div><strong>Subject:</strong> ${email.subject}</div>
+                <div><strong>Timestamp:</strong> ${email.timestamp}</div>
+            </div>
+            <div id="archive-btn-container" style="margin-top: 10px;"></div>
+            <hr>
+            <div class="email-body">${email.body}</div>
+        `;
+
+        // 2. Lógica do Botão de Arquivar
+        // Pegamos o e-mail do usuário logado (geralmente está no H2 do seu HTML)
+        const currentUser = document.querySelector('h2').innerText;
+
+        if (email.sender !== currentUser) {
+            const btn = document.createElement('button');
+            btn.innerHTML = email.archived ? "Unarchive" : "Archive";
+            btn.className = email.archived ? "btn btn-sm btn-outline-danger" : "btn btn-sm btn-outline-success";
+            
+            btn.addEventListener('click', function() {
+                // Fazemos o PUT para inverter o status de arquivamento
+                fetch(`/emails/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        archived: !email.archived
+                    })
+                })
+                .then(() => {
+                    // Após atualizar, carregamos o Inbox novamente
+                    load_mailbox('inbox');
+                });
+            });
+            
+            document.querySelector('#archive-btn-container').append(btn);
+        }
+
+        // 3. Marcar como lido (seu código de PUT que já fizemos antes)
+        if (!email.read) {
+            fetch(`/emails/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ read: true })
+            });
+        }
+    });
 }
