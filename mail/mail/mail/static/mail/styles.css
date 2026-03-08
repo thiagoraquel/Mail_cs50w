@@ -1,3 +1,35 @@
 textarea {
     min-height: 400px;
 }
+
+.email-row {
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    transition: background-color 0.2s;
+}
+
+.email-row:hover {
+    background-color: #f1f3f4;
+}
+
+/* Gray background for read emails */
+.read {
+    background-color: #e8eaed;
+}
+
+.sender {
+    flex: 1;
+}
+
+.subject {
+    flex: 2;
+}
+
+.timestamp {
+    color: #5f6368;
+    font-size: 0.9em;
+}

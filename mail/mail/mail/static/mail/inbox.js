@@ -42,12 +42,44 @@ function compose_email() {
 
 function load_mailbox(mailbox) {
   
-  // Show the mailbox and hide other views
+  // 1. Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
-  // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+  // 2. Show the mailbox name
+  const view = document.querySelector('#emails-view');
+  view.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // 3. Fetch emails for this mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+      // 4. Loop through emails and create a row for each
+      emails.forEach(email => {
+          const element = document.createElement('div');
+          
+          // Add CSS classes for styling (we'll define these next)
+          element.classList.add('email-row');
+          if (email.read) {
+              element.classList.add('read');
+          }
+
+          // 5. Build the inner HTML of the row
+          element.innerHTML = `
+              <span class="sender"><strong>${email.sender}</strong></span>
+              <span class="subject">${email.subject}</span>
+              <span class="timestamp">${email.timestamp}</span>
+          `;
+
+          // 6. Add a click event to view the email (We'll build view_email later)
+          element.addEventListener('click', function() {
+              console.log('This element has been clicked!');
+              view_email(email.id);
+          });
+
+          view.append(element);
+      });
+  });
 }
 
 function send_email(recipient, subject, body) {
@@ -79,4 +111,15 @@ function send_email(recipient, subject, body) {
       alert(error.message); 
       console.error('Error:', error);
   });
+}
+
+function view_email(id) {
+    // For now, let's just make sure it works
+    console.log(`Viewing email with ID: ${id}`);
+    
+    // Hide mailbox, show a "view" div (you might need to add this to your HTML)
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+    
+    // Logic to fetch and display single email goes here...
 }
