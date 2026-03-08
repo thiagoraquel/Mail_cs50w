@@ -33,3 +33,20 @@ textarea {
     color: #5f6368;
     font-size: 0.9em;
 }
+
+.email-header {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    line-height: 1.6;
+}
+
+.email-body {
+    white-space: pre-wrap; /* This preserves line breaks in the message */
+    padding: 20px 10px;
+    font-size: 1.1em;
+}
+
+#email-detail-view {
+    display: none; /* Hidden by default */
+}

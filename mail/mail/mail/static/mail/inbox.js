@@ -18,6 +18,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#email-detail-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -45,6 +46,7 @@ function load_mailbox(mailbox) {
   // 1. Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-detail-view').style.display = 'none';
 
   // 2. Show the mailbox name
   const view = document.querySelector('#emails-view');
@@ -114,12 +116,42 @@ function send_email(recipient, subject, body) {
 }
 
 function view_email(id) {
-    // For now, let's just make sure it works
-    console.log(`Viewing email with ID: ${id}`);
-    
-    // Hide mailbox, show a "view" div (you might need to add this to your HTML)
+    // 1. Setup the views
     document.querySelector('#emails-view').style.display = 'none';
     document.querySelector('#compose-view').style.display = 'none';
+    const detailView = document.querySelector('#email-detail-view');
+    detailView.style.display = 'block';
+    detailView.innerHTML = ''; // Clear previous email content
+
+    // 2. Fetch the email data
+    fetch(`/emails/${id}`)
+    .then(response => response.json())
+    .then(email => {
+        // 3. Display the email content
+        detailView.innerHTML = `
+            <div class="email-header">
+                <div><strong>From:</strong> ${email.sender}</div>
+                <div><strong>To:</strong> ${email.recipients}</div>
+                <div><strong>Subject:</strong> ${email.subject}</div>
+                <div><strong>Timestamp:</strong> ${email.timestamp}</div>
+            </div>
+            <hr>
+            <div class="email-body">
+                ${email.body}
+            </div>
+        `;
+
+        // 4. Mark email as READ
+        // We do this after showing it so it updates on the server
+        if (!email.read) {
+            fetch(`/emails/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    read: true
+                })
+            });
+        }
+    });
+
     
-    // Logic to fetch and display single email goes here...
 }
